@@ -1,8 +1,8 @@
 import express from "express";
 import ImageKit from "imagekit";
+import cors from "cors";
 
 
-const cors = require("cors");
 
 
 const port = process.env.PORT || 3000;
@@ -16,18 +16,13 @@ app.use(cors(
 ))
 
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-  });
+
 
 
 const imagekit = new ImageKit({
-    urlEndpoint: process.env.VITE_IMAGE_KIT_ENDPOINT,
-    publicKey: process.env.VITE_IMAGE_KIT_PUBLIC_KEY,
-    privateKey: process.env.VITE_IMAGE_KIT_PRIVATE_KEY,
+    urlEndpoint: "https://ik.imagekit.io/siser17",
+    publicKey: "public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
+    privateKey: "private_QxEuyoriXywOoRBn//HhTxh9fo0=",
 });
 
 app.get("/api/upload",(req,res)=>{
