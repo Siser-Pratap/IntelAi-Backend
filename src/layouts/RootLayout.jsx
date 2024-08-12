@@ -2,7 +2,7 @@ import {Link, Outlet} from "react-router-dom";
 import { ClerkProvider, SignedIn, UserButton, SignedOut, SignInButton} from "@clerk/clerk-react";
 
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const PUBLISHABLE_KEY = "pk_test_ZnVua3ktbG9ic3Rlci01OC5jbGVyay5hY2NvdW50cy5kZXYk"
 
 if (!PUBLISHABLE_KEY) {
   throw new Error("Missing Publishable Key")
