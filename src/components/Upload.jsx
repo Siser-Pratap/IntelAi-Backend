@@ -27,11 +27,7 @@ const authenticator =  async () => {
 
 const Upload = () => {
 
-    fetch('http://localhost:3000/api/upload', {
-        mode: 'no-cors',
-        method: 'POST',
-        body: authenticator,
-      });
+   
 
     const onError = (err) => {
         console.log("Error", err);
