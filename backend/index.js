@@ -10,9 +10,9 @@ const app = express();
 
 
 app.use(cors(
-        {
-        origin :process.env.CLIENT_URL 
-    }
+    //     {
+    //     // origin :"http://localhost:5173/", 
+    // }
 ))
 
 
@@ -20,9 +20,9 @@ app.use(cors(
 
 
 const imagekit = new ImageKit({
-    urlEndpoint:process.env.IMAGE_KIT_ENDPOINT,
-    publicKey:process.env.IMAGE_KIT_PUBLIC_KEY,
-    privateKey:process.env.IMAGE_KIT_PRIVATE_KEY,
+    urlEndpoint:"https://ik.imagekit.io/siser17",
+    publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
+    privateKey:"private_QxEuyoriXywOoRBn//HhTxh9fo0=",
 });
 
 app.get("/api/upload",(req,res)=>{
