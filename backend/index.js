@@ -27,7 +27,7 @@ const imagekit = new ImageKit({
 
 app.get("/api/upload",(req,res)=>{
     
-    var result = imagekit.getAuthenticationParameters(token, expire);
+    var result = imagekit.getAuthenticationParameters();
     res.send(result);
 })
 
