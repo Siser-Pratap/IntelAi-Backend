@@ -21,7 +21,7 @@ app.use(cors(
 
 const imagekit = new ImageKit({
     urlEndpoint:process.env.IMAGE_KIT_ENDPOINT,
-    publicKey:process.env.IMAGE_KIT_PUBLIC_KEY,
+    publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
     privateKey:process.env.IMAGE_KIT_PRIVATE_KEY,
 });
 

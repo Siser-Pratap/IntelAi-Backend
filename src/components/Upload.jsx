@@ -5,7 +5,7 @@ import "./Upload.css";
 
 
 const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT;
-const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY; 
+const publicKey ="public_Oo8D9A7D+S4HioT1W2LU6TEqOos="; 
 
 const authenticator =  async() => {
     try {
