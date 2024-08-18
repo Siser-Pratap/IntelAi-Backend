@@ -3,9 +3,11 @@ import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
 import "./Upload.css";
 
 
-const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT ;
+
+const urlEndpoint = import.meta.env.VITE_IMAGE_KIT_ENDPOINT;
 const publicKey = import.meta.env.VITE_IMAGE_KIT_PUBLIC_KEY; 
-const authenticator =  async () => {
+
+const authenticator =  async() => {
     try {
         const response = await fetch("http://localhost:3000/api/upload");
 
@@ -25,24 +27,26 @@ const authenticator =  async () => {
 
 
 
-const Upload = () => {
+const Upload = ({setImg}) => {
 
    
 
-    const onError = (err) => {
+    const onError = err => {
         console.log("Error", err);
     };
 
-    const onSuccess = (res) => {
+    const onSuccess = res => {
         console.log("Sucess", res);
+        setImg((prev)=>({...prev, isLoading:false, dbData:res}));
     };
 
-    const onUploadProgress = (progress) => {
+    const onUploadProgress = progress => {
         console.log("Progress", progress);
     };
 
-    const onUploadStart = (evt) => {
+    const onUploadStart = evt => {
         console.log("Start", evt);
+        setImg((prev)=>({...prev, isLoading:true}));
     };
 
 
@@ -50,11 +54,10 @@ const Upload = () => {
     return (
         <>
         <IKContext 
-        publicKey={publicKey} 
-        urlEndpoint={urlEndpoint} 
-        authenticator={authenticator} 
+        urlEndpoint={urlEndpoint}
+        publicKey={publicKey}
+        authenticator={authenticator}
       >
-        
         <IKUpload
           fileName="test-upload.png"
           onError={onError}
