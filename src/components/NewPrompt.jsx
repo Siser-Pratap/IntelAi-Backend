@@ -11,6 +11,7 @@ const NewPrompt = () => {
 
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
+    
 
     const [img, setImg] = useState(
         {
@@ -23,16 +24,19 @@ const NewPrompt = () => {
         e.preventDefault();
     
         const text = e.target.text.value;
+        
         if (!text) return;
     
         add(text, false);
+        
+        
       };
 
     const endRef = useRef(null);
 
     useEffect(()=>{
         endRef.current.scrollIntoView({behavior:"smooth"});
-    }, []);
+    }, [question, answer, img.dbData]);
 
     const add = async(text) => {
 
