@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.4.0",
+    "@google/generative-ai": "^0.17.1",
     "express": "^4.19.2",
     "imagekit": "^5.1.0",
     "imagekitio-react": "^4.2.0",
