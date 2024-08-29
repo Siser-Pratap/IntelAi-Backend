@@ -1,6 +1,7 @@
 
 import { IKContext, IKImage, IKUpload } from 'imagekitio-react';
 import "./Upload.css";
+import { useRef } from 'react';
 
 
 
@@ -29,7 +30,7 @@ const authenticator =  async() => {
 
 const Upload = ({setImg}) => {
 
-   
+    const ikUploadRef = useRef(null);
 
     const onError = err => {
         console.log("Error", err);
@@ -65,7 +66,14 @@ const Upload = ({setImg}) => {
           useUniqueFileName={true}
           onUploadProgress={onUploadProgress}
           onUploadStart={onUploadStart}
+          style={{display:"none"}}
+          ref={ikUploadRef}
         />
+        {
+            <label onClick={() => ikUploadRef.current.click()}>
+                <img src="/attachment.png" alt="" />
+            </label>
+        }
       </IKContext>
         </>
     );
