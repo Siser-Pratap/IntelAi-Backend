@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import Upload from "./Upload";
 import { IKImage } from "imagekitio-react";
 import model from "../lib/gemini";
+import Markdown from "react-markdown";
 
 const NewPrompt = () => {
 
@@ -55,8 +56,8 @@ const NewPrompt = () => {
             transformation={[{width:"380"}]}/>
         )}
         {question && <div className="message user">{question}</div>}
-        {answer && <div className="message">{answer}</div>}
-        {/* <button onClick={add}>TEST ME</button> */}
+        {answer && <div className="message"><Markdown>{answer}</Markdown></div>}
+        
         <div className="endChat" ref={endRef}></div>
             <form className="newForm" onSubmit={handleSubmit}>
                 <Upload setImg={setImg} />
