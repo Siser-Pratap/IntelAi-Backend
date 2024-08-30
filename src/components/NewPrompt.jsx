@@ -21,6 +21,7 @@ const NewPrompt = () => {
             aiData:{}
         }
     )
+
     const handleSubmit = async (e) => {
         e.preventDefault();
     
@@ -43,12 +44,40 @@ const NewPrompt = () => {
 
     setQuestion(text)
 
-    const result = await model.generateContent(
+    const result = await chat.sendMessageStream(
         Object.entries(img.aiData).length?[img.aiData, text]:[text]
     );
-    setAnswer(result.response.text());
+
+    let accumulatedText="";
+    for await (const chunk of result.stream){
+        const chunkText = chunk.text();
+        console.log(chunkText);
+        accumulatedText+=chunkText;
+        setAnswer(accumulatedText);
+    }
     
-}
+    setImg({
+        isLoading: false,
+            error:"",
+            dbData:{},
+            aiData:{}
+    })}
+
+    const chat = model.startChat({
+        history:[
+        {
+            role:"user",
+            parts:[{text:"Hello, I have 2 dogs"}],
+        },
+        {
+            role:"model",
+            parts:[{text:"Great to meet you. What would you like to know?"}],
+        },
+    ],
+        generationConfig:{
+            // maxOutputTokens:100,
+        }
+    });
 
 
 
