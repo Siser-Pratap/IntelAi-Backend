@@ -17,7 +17,8 @@ const NewPrompt = () => {
         {
             isLoading: false,
             error:"",
-            dbData:{}
+            dbData:{},
+            aiData:{}
         }
     )
     const handleSubmit = async (e) => {
@@ -42,7 +43,9 @@ const NewPrompt = () => {
 
     setQuestion(text)
 
-    const result = await model.generateContent(text);
+    const result = await model.generateContent(
+        Object.entries(img.aiData).length?[img.aiData, text]:[text]
+    );
     setAnswer(result.response.text());
     
 }
