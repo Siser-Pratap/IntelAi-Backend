@@ -6,14 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 const ChatList = () => {
 
   const { isPending, error, data } = useQuery({
-    queryKey: ['UserChats'],
+    queryKey: ['UserChat'],
     queryFn: () =>
-      fetch(`https://localhost:3000/api/userchats`, {
+      fetch("https://localhost:3000/api/userchats", {
         credentials:"include",
       }).then((res) =>
         res.json(),
       ),
-  })
+  });
 
   
 
