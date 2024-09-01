@@ -2,7 +2,6 @@ import express from "express";
 import ImageKit from "imagekit";
 import cors from "cors";
 import mongoose from "mongoose";
-import { MongoClient, ServerApiVersion } from "mongodb";
 
 
 
@@ -19,33 +18,15 @@ app.use(cors(
 
 app.use(express.json());
 
-
-const uri = "mongodb+srv://jaysiserpratap:jaysiserpratap@chatnow.fr2vg.mongodb.net/?retryWrites=true&w=majority&appName=ChatNow";
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-async function run() {
-  try {
-    
-    await client.connect({
-        
-    });
-    
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    
-    await client.close();
-    
-  }
+const connect = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO)
+        console.log("Connected to MongoDB");
+    }
+    catch(err){
+        console.log(err);
+    }
 }
-run().catch(console.dir);
-
-
 
 
 
@@ -69,10 +50,7 @@ app.post("/api/chats", (req,res)=> {
 });
 
 app.listen(port, ()=>{
-    setTimeout(() => {
-        run();
-    }, 5);
-    
+    connect();
     console.log("Server is running on 3000");
 })
 
