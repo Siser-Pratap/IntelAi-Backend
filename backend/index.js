@@ -17,7 +17,8 @@ app.use(cors(
 
 const connect = async () => {
     try {
-
+        await mongoose.connect(process.env.MONGO)
+        console.log("Connected to MongoDB");
     }
     catch(err){
         console.log(err);
@@ -41,6 +42,7 @@ app.get("/api/upload",(req,res)=>{
 })
 
 app.listen(port, ()=>{
+    connect();
     console.log("Server is running on 3000");
 })
 
