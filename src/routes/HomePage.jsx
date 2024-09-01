@@ -12,6 +12,12 @@ const HomePage = () => {
     
     const [typingstatus,settypingstatus]=useState("Human1");
 
+    const test = async () => {
+    await fetch("http://localhost:3000/api/test",{
+        credentials:"include",
+    });
+    };
+
     return (
         <div className="homepage flex items-center gap-[100px] h-full">
             <img src="/orbital.png" alt="" className="absolute bottom-0 left-0 orbital opacity-[0.05] z-[-1]" />
@@ -20,6 +26,7 @@ const HomePage = () => {
                     <h2>Supercharge your creativity and productivity</h2>
                     <h3 className="font-[400] max-w-[70%]">Experience seamless conversations with our advanced AI, designed to assist, entertain, and connect with you anytime, anywhere. Start chatting now!</h3>
                     <Link to="/dashboard" className="bg-[#217bfe] getstarted text-[14px] mt-[20px]  hover:bg-white hover:text-[#217bfe] text-white rounded-[20px] ">Get Started</Link>
+                    <button onClick={test}>TEST BACKEND</button>
             </div>
             <div className="right flex-1 flex items-center justify-center h-full">
                 <div className="imgContainer relative flex items-center justify-center bg-[#140e2d] rounded-[50px] w-[80%] h-1/2 ">

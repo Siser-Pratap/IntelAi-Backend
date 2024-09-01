@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import Chat from "./models/Chat.js";
 import UserChat from "./models/UserChat.js";
+import {ClerkExpressRequireAuth} from "@clerk/clerk-sdk-node";
 
 
 
@@ -13,9 +14,11 @@ const app = express();
 
 
 app.use(cors(
-    //     {
-    //    origin:process.env.CLIENT_URL
-    // }
+        {
+       origin:process.env.CLIENT_URL,
+       credentials:true,
+    }
+    
 ))
 
 app.use(express.json());
@@ -35,9 +38,9 @@ const connect = async () => {
 
 
 const imagekit = new ImageKit({
-    urlEndpoint:process.env.IMAGE_KIT_ENDPOINT,
+    urlEndpoint:"https://ik.imagekit.io/siser17",
     publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
-    privateKey:process.env.IMAGE_KIT_PRIVATE_KEY,
+    privateKey:"private_QxEuyoriXywOoRBn//HhTxh9fo0=",
 });
 
 app.get("/api/upload",(req,res)=>{
@@ -46,7 +49,13 @@ app.get("/api/upload",(req,res)=>{
     res.send(result);
 })
 
-app.post("/api/chats", async (req,res)=> {
+
+app.get("/api/test", ClerkExpressRequireAuth(), (req, res) => {
+    console.log("Success");
+    res.send("Success!");
+})
+
+app.post("/api/chats", ClerkExpressRequireAuth(), async (req,res)=> {
     const {userId, text} = req.body;
     
     try{
@@ -99,8 +108,18 @@ app.post("/api/chats", async (req,res)=> {
 
 });
 
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(401).send('Unauthenticated!')
+  });
+
 app.listen(port, ()=>{
     connect();
+    console.log({
+        urlEndpoint:"https://ik.imagekit.io/siser17",
+    publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
+    privateKey:"private_QxEuyoriXywOoRBn//HhTxh9fo0=",
+    });
     console.log("Server is running on 3000");
 })
 
