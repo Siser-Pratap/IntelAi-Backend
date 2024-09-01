@@ -15,6 +15,15 @@ app.use(cors(
     // }
 ))
 
+const connect = async () => {
+    try {
+
+    }
+    catch(err){
+        console.log(err);
+    }
+}
+
 
 
 
