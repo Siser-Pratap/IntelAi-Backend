@@ -50,13 +50,27 @@ app.get("/api/upload",(req,res)=>{
 })
 
 
-app.get("/api/test", ClerkExpressRequireAuth(), (req, res) => {
-    console.log("Success");
-    res.send("Success!");
-})
+// app.get("/api/test", ClerkExpressRequireAuth(), (req, res) => {
+//     const userId = req.auth.userId;
+//     console.log(userId);
+//     res.send("Success!");
+// })
+
+app.get("/api/userchats", ClerkExpressRequireAuth(), async(req, res) => {
+    const userId = req.auth.userId;
+    try{
+        const userChats = UserChat.find({userId});
+        res.status(200).send(userChats);
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send("Error fetching userChats!");
+    }
+});
 
 app.post("/api/chats", ClerkExpressRequireAuth(), async (req,res)=> {
-    const {userId, text} = req.body;
+    const userId = req.auth.userId;
+    const {text} = req.body;
     
     try{
         //Create a new chat
