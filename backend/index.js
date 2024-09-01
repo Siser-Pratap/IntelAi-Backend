@@ -2,6 +2,8 @@ import express from "express";
 import ImageKit from "imagekit";
 import cors from "cors";
 import mongoose from "mongoose";
+import Chat from "./models/Chat.js";
+import UserChat from "./models/UserChat.js";
 
 
 
@@ -44,9 +46,57 @@ app.get("/api/upload",(req,res)=>{
     res.send(result);
 })
 
-app.post("/api/chats", (req,res)=> {
-    const {text} = req.body;
-    console.log(text);
+app.post("/api/chats", async (req,res)=> {
+    const {userId, text} = req.body;
+    
+    try{
+        //Create a new chat
+        const newChat = new Chat({
+            userId: userId, 
+            history:[{role:"user", parts:[{text}]}]
+        })
+
+        const savedChat = await newChat.save();
+
+        //check if the userchats exists
+        const userChats = await UserChat.find({userId:userId});
+
+
+        //if doesn't exists creata a new one and add the chat in the chats array
+        if (!userChats.length){
+            const newUserChats = new UserChat({
+                userId:userId,
+                chats:[
+                    {
+                        _id:savedChat.id,
+                        title:text.substring(0.40),
+                    }
+                ]
+            });
+            await newUserChats.save();
+        }else{
+            // if exists, push the chats to the existing array
+            await UserChat.updateOne({
+                userId:userId},
+                {
+                    $push:{
+                        chats:{
+                            _id:savedChat._id,
+                            title:text.substring(0,40),
+                        },
+                    },
+                }
+            );
+        }
+        res.status(201).send(newChat._id);
+        
+    }
+    catch(err){
+        console.log(err);
+        res.status(500).send("Error in creating chat");
+    }
+
+
 });
 
 app.listen(port, ()=>{
