@@ -3,6 +3,24 @@ import "./dashboard.css";
 
 
 const DashBoard = () => {
+
+    const handlesubmit = async(e) => {
+      e.preventDefault();
+      const text= e.target.text.value;
+      if (!text) return;
+
+      await fetch("http://localhost:3000/api/chats",{
+        method:'POST',
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({text})
+    })
+
+    }
+    
+
+
     return (
         <div className="dashboardPage">
         <div className="texts">
@@ -25,7 +43,7 @@ const DashBoard = () => {
             </div>
           </div>
         </div>
-        <div className="formContainer">
+        <div className="formContainer" onSubmit={handlesubmit}>
           <form>
             <input type="text" name="text" placeholder="Ask me anything..." />
             <button>

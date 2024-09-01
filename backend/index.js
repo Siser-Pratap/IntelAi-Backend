@@ -45,7 +45,7 @@ app.get("/api/upload",(req,res)=>{
 })
 
 app.post("/api/chats", (req,res)=> {
-    const text = req.body;
+    const {text} = req.body;
     console.log(text);
 });
 
