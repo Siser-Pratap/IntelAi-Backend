@@ -7,6 +7,12 @@ const DashBoard = () => {
 
   const {userId} = useAuth(); 
 
+  const handleclick = async() => {
+    await fetch("http://localhost:3000/api/test", {
+      credentials:"include",
+    });
+};
+
     const handlesubmit = async(e) => {
       e.preventDefault();
       const text= e.target.text.value;
@@ -44,6 +50,7 @@ const DashBoard = () => {
             <div className="option">
               <img src="/code.png" alt="" />
               <span>Help me with my Code</span>
+              <button onClick={handleclick}>help me</button>
             </div>
           </div>
         </div>

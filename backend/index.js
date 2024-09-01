@@ -49,6 +49,11 @@ app.get("/api/upload",(req,res)=>{
     res.send(result);
 })
 
+app.get("/api/test", ClerkExpressRequireAuth(), (req,res)=>{
+    const userId = req.auth.userId;
+    console.log(userId);
+});
+
 
 // app.get("/api/test", ClerkExpressRequireAuth(), (req, res) => {
 //     const userId = req.auth.userId;
@@ -59,7 +64,7 @@ app.get("/api/upload",(req,res)=>{
 app.get("/api/userchats", ClerkExpressRequireAuth(), async(req, res) => {
     const userId = req.auth.userId;
     try{
-        const userChats = UserChat.find({userId});
+        const userChats = await UserChat.find({userId});
         res.status(200).send(userChats[0].chats);
     }
     catch(err){
