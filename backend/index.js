@@ -61,17 +61,18 @@ app.get("/api/test", ClerkExpressRequireAuth(), (req,res)=>{
 //     res.send("Success!");
 // })
 
-app.get("/api/userchats", ClerkExpressRequireAuth(), async(req, res) => {
+app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
     const userId = req.auth.userId;
-    try{
-        const userChats = await UserChat.find({userId});
-        res.send(userChats[0].chats);
+  
+    try {
+      const userChats = await UserChat.find({ userId});
+  
+      res.status(200).send(userChats[0].chats);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send("Error fetching userchats!");
     }
-    catch(err){
-        console.log(err);
-        res.status(500).send("Error fetching userChats!");
-    }
-});
+  });
 
 app.post("/api/chats", ClerkExpressRequireAuth(), async (req,res)=> {
     const userId = req.auth.userId;
@@ -134,11 +135,11 @@ app.use((err, req, res, next) => {
 
 app.listen(port, ()=>{
     connect();
-    console.log({
-        urlEndpoint:"https://ik.imagekit.io/siser17",
-    publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
-    privateKey:"private_QxEuyoriXywOoRBn//HhTxh9fo0=",
-    });
+    // console.log({
+    //     urlEndpoint:"https://ik.imagekit.io/siser17",
+    // publicKey:"public_Oo8D9A7D+S4HioT1W2LU6TEqOos=",
+    // privateKey:"private_QxEuyoriXywOoRBn//HhTxh9fo0=",
+    // });
     console.log("Server is running on 3000");
 })
 
