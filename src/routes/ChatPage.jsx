@@ -10,16 +10,7 @@ import { IKImage } from "imagekitio-react";
 
 const ChatPage = () => {
 
-  //   const path=useLocation().pathname;
-  //   const chatId = path.split("/").pop(); 
-
-  // const { isPending, error, data } = useQuery({
-  //   queryKey: ["chat", chatId],
-  //   queryFn: () =>
-  //     fetch(`${import.meta.env.VITE_API_URL}api/chat/${chatId}`, {
-  //       credentials: "include",
-  //     }).then((res) => res.json()),
-  // });
+  
     
   const path = useLocation().pathname;
   const chatId = path.split("/").pop();
@@ -38,46 +29,7 @@ const ChatPage = () => {
     <div className="chatPage">
       <div className="wrapper">
         <div className="chat">
-          {/* {isPending? "Loading...":error? "Something Went wrong":data?.history?.map(
-            (message, i)=> {
-              <div className="message user">
-                <Markdown>{message.parts[0].text}</Markdown>
-              </div>
-            }
-          )} */}
-
-
-
-          {/* <NewPrompt /> */}
-          {/* {isPending
-            ? "Loading..."
-            : error
-            ? "Something went wrong!"
-            : data?.history?.map((message, i) => (
-                <> */}
-                  {/* {message.img && (
-                    <IKImage
-                      urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
-                      path={message.img}
-                      height="300"
-                      width="400"
-                      transformation={[{ height: 300, width: 400 }]}
-                      loading="lazy"
-                      lqip={{ active: true, quality: 20 }}
-                    />
-                  )}
-                  <div
-                    className={
-                      message.role === "user" ? "message user" : "message"
-                    }
-                    key={i}
-                  >
-                    <Markdown>{message.parts[0].text}</Markdown>
-                  </div>
-                </>
-              ))}
-
-          {data && <NewPrompt data={data}/>} */}
+          
             {isPending?"Loading...":error?"Something went wrong!":data?.history.map(
               (message, i)=>(
                 <>
@@ -89,6 +41,8 @@ const ChatPage = () => {
                     width={400}
                     transformation={[{height:300, width:400}]}
                     loading="lazy"
+                    lqip={{active: true, quality:20}}
+
                      />
                   )}
                 <div className={message.role==="user"? "message user": "message "} key={i}>
