@@ -189,6 +189,11 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async(req, res)=> {
     }
 });
 
+
+app.get("*", (req, res)=> {
+    res.sendFile("/client/index.html");
+})
+
 app.listen(port, ()=>{
     connect();
     // console.log({
