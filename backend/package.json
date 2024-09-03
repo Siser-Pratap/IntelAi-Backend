@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@clerk/clerk-sdk-node": "^5.0.33",
+    "@stripe/stripe-js": "^4.4.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "imagekit": "^5.1.0",

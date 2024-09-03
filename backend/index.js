@@ -183,7 +183,27 @@ import { loadStripe } from '@stripe/stripe-js';
 const port = process.env.PORT || 3000;
 const app = express();
 
+let stripePromise;
+
 const stripe = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+const initializeStripe = async () => {
+  try {
+    stripePromise = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    if (!stripePromise) {
+      console.error('Failed to initialize Stripe. Check your publishable key.');
+    }
+  } catch (error) {
+    console.error('Error initializing Stripe:', error);
+  }
+};
+
+initializeStripe();
+console.log('Stripe Publishable Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+
+
+
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
