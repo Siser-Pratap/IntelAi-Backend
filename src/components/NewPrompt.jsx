@@ -32,7 +32,7 @@ const NewPrompt = (data) => {
         
         if (!text) return;
     
-        // add(text, false);
+        add(text, false);
 
         
         
@@ -40,10 +40,11 @@ const NewPrompt = (data) => {
       };
 
     const endRef = useRef(null);
+    const formRef = useRef(null);
 
     useEffect(()=>{
         endRef.current.scrollIntoView({behavior:"smooth"});
-    }, [question, answer, img.dbData]);
+    }, [data, question, answer, img.dbData]);
 
 
     const queryClient = useQueryClient();
@@ -65,6 +66,7 @@ const NewPrompt = (data) => {
     },
     onSuccess:() => {
       queryClient.invalidateQueries({queryKey: ["chat", data._id]}).then(()=>{
+        formRef.current.reset();
         setQuestion("");
         setAnswer("");
         setImg({
@@ -80,9 +82,22 @@ const NewPrompt = (data) => {
     },
   });
 
-    const add = async(text) => {
+  //helps to prevent getting 2 answers
+  const hasRun = useRef(false);
+  useEffect(()=>{
+    if(!hasRun.current){
+    if(data?.history?.length===1){
+        add(data.history[0].parts[0].text, true)
+    }
+}
+hasRun.current = true;
+  },[]);
 
-    setQuestion(text)
+    const add = async(text,isInitial ) => {
+
+    if(!isInitial){
+        setQuestion(text);
+    }
 
     try{
     const result = await chat.sendMessageStream(
@@ -135,7 +150,7 @@ const NewPrompt = (data) => {
         {answer && <div className="message"><Markdown>{answer}</Markdown></div>}
         
         <div className="endChat" ref={endRef}></div>
-            <form className="newForm" onSubmit={handleSubmit}>
+            <form className="newForm" onSubmit={handleSubmit} ref={formRef}>
                 <Upload setImg={setImg} />
                 <input type="file" id="file" multiple={false} hidden />
                 <input type="text" name="text" placeholder="Ask anything..." />
