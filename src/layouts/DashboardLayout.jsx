@@ -34,7 +34,7 @@
 // export default DashboardLayout
 
 import { Outlet, useNavigate } from "react-router-dom";
-import "./dashboardLayout.css";
+import "./dashboardlayout.css";
 import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import ChatList from "../components/ChatList";
