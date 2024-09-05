@@ -178,28 +178,25 @@ import mongoose from "mongoose";
 import Chat from "./models/chat.js";
 import UserChats from "./models/userChats.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
-import { loadStripe } from '@stripe/stripe-js';
+import connectDb from "./mongodb/connect.js";
+// import { useClerk } from "@clerk/clerk-react";
+
+
+
 
 const port = process.env.PORT || 3000;
 const app = express();
 
-let stripePromise;
+// if (!process.env.CLERK_PUBLISHABLE_KEY || !process.env.CLERK_SECRET_KEY) {
+//   console.error("Missing Clerk API keys in environment variables.");
+//   process.exit(1);
+// }
 
-const stripe = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+// // Initialize Clerk with the secret key, used for server-side operations
+// const clerk = useClerk({
+//   secretKey: process.env.CLERK_SECRET_KEY,
+// });
 
-const initializeStripe = async () => {
-  try {
-    stripePromise = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-    if (!stripePromise) {
-      console.error('Failed to initialize Stripe. Check your publishable key.');
-    }
-  } catch (error) {
-    console.error('Error initializing Stripe:', error);
-  }
-};
-
-initializeStripe();
-console.log('Stripe Publishable Key:', process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 
 
@@ -217,14 +214,28 @@ app.use(
 
 app.use(express.json());
 
-const connect = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO);
-    console.log("Connected to MongoDB");
-  } catch (err) {
-    console.log(err);
-  }
-};
+
+
+
+const serverConnect = async() => {
+    
+    try{
+      connectDb(process.env.MONGODB_URL);
+      app.listen(port, ()=>{
+        console.log(`Server is running on port ${port}`);
+      })
+    }
+    catch(err){
+      console.log(err);
+    }
+}
+
+serverConnect();
+
+
+
+
+
 
 const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
@@ -423,7 +434,3 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
 });
 
-app.listen(port, () => {
-  connect();
-  console.log("Server running on 3000");
-});
