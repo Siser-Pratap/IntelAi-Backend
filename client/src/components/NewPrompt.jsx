@@ -125,14 +125,17 @@ const NewPrompt = ({ data }) => {
   return (
     <>
       {/* ADD NEW CHAT */}
+      
       {img.isLoading && <div className="">Loading...</div>}
       {img.dbData?.filePath && (
+        
         <IKImage
           urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
           path={img.dbData?.filePath}
           width="380"
           transformation={[{ width: 380 }]}
         />
+        
       )}
       {question && <div className="message user">{question}</div>}
       {answer && (
@@ -140,14 +143,21 @@ const NewPrompt = ({ data }) => {
           <Markdown>{answer}</Markdown>
         </div>
       )}
+      
       <div className="endChat" ref={endRef}></div>
-      <form className="newForm" onSubmit={handleSubmit} ref={formRef}>
-        <Upload setImg={setImg} />
-        <input id="file" type="file" multiple={false} hidden />
-        <input type="text" name="text" placeholder="Ask anything..." />
-        <button>
-          <img src="/arrow.png" alt="" />
+      <form className="flex justify-center items-end m-1 w-full h-full  mb-[10px]" onSubmit={handleSubmit} ref={formRef}>
+        <div className="m-1 mb-[35px]">
+        <Upload className="" setImg={setImg} />
+        <input id="file" className="" type="file" multiple={false} hidden />
+        </div>
+        <div className="flex  justify-between items-center gap-[10px]">
+        <input className="p-[20px] text-[#ececec] bg-[#2c2937] mb-[20px] rounded-[20px] border-none outline-none" type="text" name="text" placeholder="Ask anything..." />
+        <button className="bg-[#2c2937] rounded-[20px] p-[10px] mb-[20px]">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
+            </svg>
         </button>
+        </div>
       </form>
     </>
   );

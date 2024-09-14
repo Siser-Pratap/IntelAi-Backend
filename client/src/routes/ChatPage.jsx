@@ -31,7 +31,9 @@ const ChatPage = () => {
             ? "Something went wrong!"
             : data?.history?.map((message, i) => (
                 <>
+                  
                   {message.img && (
+                    <div className={message.role === "user" ? "message img" : "message "}>
                     <IKImage
                       urlEndpoint={import.meta.env.VITE_IMAGE_KIT_ENDPOINT}
                       path={message.img}
@@ -41,10 +43,12 @@ const ChatPage = () => {
                       loading="lazy"
                       lqip={{ active: true, quality: 20 }}
                     />
+                    </div>
                   )}
+                  
                   <div
                     className={
-                      message.role === "user" ? "message user" : "message"
+                      message.role === "user" ? "message user " : "message "
                     }
                     key={i}
                   >
