@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "postinstall": "^0.11.0"
+  }
+}

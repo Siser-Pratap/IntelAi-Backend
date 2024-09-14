@@ -5,7 +5,7 @@ import path from "path";
 import url, { fileURLToPath } from "url";
 import ImageKit from "imagekit";
 import mongoose from "mongoose";
-import Chat from "./models/chat.js";
+import chat from "./models/Chat.js";
 import UserChats from "./models/userChats.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import connectDb from "./mongodb/connect.js";
@@ -78,7 +78,7 @@ app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
 
   try {
     // CREATE A NEW CHAT
-    const newChat = new Chat({
+    const newChat = new chat({
       userId: userId,
       history: [{ role: "user", parts: [{ text }] }],
     });
