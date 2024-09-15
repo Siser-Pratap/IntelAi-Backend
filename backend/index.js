@@ -36,7 +36,25 @@ const __dirname = path.dirname(__filename);
 
 // app.use(cors(corsOptions));
 
-app.use(cors());
+const cors = require('cors');
+
+const allowedOrigins = [
+  'https://chat-2i3hulb66-indiasis-projects.vercel.app',
+  'https://chat-now-git-main-indiasis-projects.vercel.app'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
+
+
+
 
 app.use(express.json());
 
