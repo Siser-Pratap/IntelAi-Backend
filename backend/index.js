@@ -72,6 +72,11 @@ app.get("/api/upload", (req, res) => {
   res.send(result);
 });
 
+app.get("/", async(req, res)=>{
+  res.send("Hello from Image_Gen");
+  // console.log(response.data[0].url);
+});
+
 app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
   const { text } = req.body;
