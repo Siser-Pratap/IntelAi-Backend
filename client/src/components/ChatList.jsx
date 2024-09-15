@@ -6,7 +6,7 @@ const ChatList = () => {
   const { isPending, error, data } = useQuery({
     queryKey: ["userChats"],
     queryFn: () =>
-      fetch(`${import.meta.env.VITE_API_URL}/api/userchats`, {
+      fetch(`https://chatai-fsen.onrender.com/api/userchats`, {
         credentials: "include",
       }).then((res) => res.json()),
   });
