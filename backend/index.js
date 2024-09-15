@@ -29,29 +29,29 @@ const __dirname = path.dirname(__filename);
 
 
 
-// const corsOptions = {
-//   origin: process.env.CLIENT_URL,
-//   credentials:true,
-// }
+const corsOptions = {
+  origin: "https://chat-now-rho.vercel.app",
+  credentials:true,
+}
 
-// app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 
 
 
-const allowedOrigins = [
-  'https://chat-2i3hulb66-indiasis-projects.vercel.app',
-  'https://chat-now-git-main-indiasis-projects.vercel.app'
-];
+// const allowedOrigins = [
+//   'https://chat-2i3hulb66-indiasis-projects.vercel.app',
+//   'https://chat-now-git-main-indiasis-projects.vercel.app'
+// ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
+// app.use(cors({
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// }));
 
 
 
