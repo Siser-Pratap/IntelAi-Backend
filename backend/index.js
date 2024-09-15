@@ -29,12 +29,14 @@ const __dirname = path.dirname(__filename);
 
 
 
-const corsOptions = {
-  origin: process.env.CLIENT_URL,
-  credentials:true,
-}
+// const corsOptions = {
+//   origin: process.env.CLIENT_URL,
+//   credentials:true,
+// }
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+
+app.use(cors());
 
 app.use(express.json());
 
