@@ -30,7 +30,7 @@ const __dirname = path.dirname(__filename);
 
 
 const corsOptions = {
-  origin: "https://chat-now-rho.vercel.app",
+  origin: process.env.CLIENT_URL,
   credentials:true,
 }
 
@@ -165,9 +165,9 @@ app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
   try {
-    const chat = await chat.findOne({ _id: req.params.id, userId });
+    const Chat = await chat.findOne({ _id: req.params.id, userId });
 
-    res.status(200).send(chat);
+    res.status(200).send(Chat);
   } catch (err) {
     console.log(err);
     res.status(500).send("Error fetching chat!");
@@ -199,14 +199,14 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
 
   try {
     // Fetch the existing chat to validate the current state of history
-    const chat = await chat.findOne({ _id: req.params.id, userId });
+    const Chat = await chat.findOne({ _id: req.params.id, userId });
 
-    if (!chat) {
+    if (!Chat) {
       return res.status(404).send("Chat not found.");
     }
 
     // Check if the current history is empty or needs validation
-    if (!chat.history || chat.history.length === 0) {
+    if (!Chat.history || Chat.history.length === 0) {
       // Ensure the history starts with a user role
       if (newItems[0].role !== "user") {
         return res
