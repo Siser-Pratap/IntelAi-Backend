@@ -145,7 +145,7 @@ app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   const userId = req.auth.userId;
 
   try {
-    const chat = await Chat.findOne({ _id: req.params.id, userId });
+    const chat = await chat.findOne({ _id: req.params.id, userId });
 
     res.status(200).send(chat);
   } catch (err) {
@@ -179,7 +179,7 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
 
   try {
     // Fetch the existing chat to validate the current state of history
-    const chat = await Chat.findOne({ _id: req.params.id, userId });
+    const chat = await chat.findOne({ _id: req.params.id, userId });
 
     if (!chat) {
       return res.status(404).send("Chat not found.");
@@ -196,7 +196,7 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
     }
 
     // Update chat history with validated new items
-    const updatedChat = await Chat.updateOne(
+    const updatedChat = await chat.updateOne(
       { _id: req.params.id, userId },
       {
         $push: {
