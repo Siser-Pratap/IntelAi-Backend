@@ -36,7 +36,7 @@ const __dirname = path.dirname(__filename);
 
 // app.use(cors(corsOptions));
 
-const cors = require('cors');
+
 
 const allowedOrigins = [
   'https://chat-2i3hulb66-indiasis-projects.vercel.app',
