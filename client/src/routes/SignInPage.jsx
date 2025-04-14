@@ -33,7 +33,7 @@ const SignInPage = () => {
             const res = await axios.post(`${import.meta.env.VITE_PUBLIC_BACKEND_URL}/api/login`, data);
             if(res.status===200){
                 setloading(false);
-                document.cookie = `token=${res.data.token}; path=/; secure; HttpOnly; SameSite=Strict`;
+                localStorage.setItem('token', res.data.token);
                 navigate('/dashboard');
             }
             else{

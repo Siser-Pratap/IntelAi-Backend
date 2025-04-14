@@ -14,27 +14,12 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 
-
-
-
-
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
-
-
-
-
-
-
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-
-
-
 // const corsOptions = {
 //   // origin: process.env.CLIENT_URL,
 //   // credentials:true,
@@ -48,10 +33,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-
-
-
 // const allowedOrigins = [
 //   'https://chat-2i3hulb66-indiasis-projects.vercel.app',
 //   'https://chat-now-git-main-indiasis-projects.vercel.app'
@@ -66,17 +47,9 @@ app.use(cors(corsOptions));
 //     }
 //   }
 // }));
-
-
-
-
 app.use(express.json());
 
-
-
-
 const serverConnect = async() => {
-    
     try{
       connectDb(process.env.MONGODB_URL);
       app.listen(port, ()=>{
@@ -87,13 +60,7 @@ const serverConnect = async() => {
       console.log(err);
     }
 }
-
 serverConnect();
-
-
-
-
-
 
 const imagekit = new ImageKit({
   urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
@@ -178,23 +145,37 @@ app.get("/", async(req, res)=>{
   // console.log(response.data[0].url);
 });
 
-app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
-  const userId = req.auth.userId;
+app.post("/api/chats", async (req, res) => {
+  let userId;
+  const authHeader = req.headers.authorization;
+  console.log(authHeader, 'authHeader');
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("Authorization token missing or invalid.");
+  }
+  const token = authHeader.split(" ")[1];
+  console.log(token, 'token');
+  try {
+    console.log('try');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userId = decoded.id;
+    console.log(userId, 'userId');
+  } catch (err) {
+    console.log(err, 'error occurred');
+    return res.status(401).send("Invalid or expired token.");
+  }
   const { text } = req.body;
+  console.log(text, 'text');
 
   try {
-    // CREATE A NEW CHAT
     const newChat = new chat({
       userId: userId,
       history: [{ role: "user", parts: [{ text }] }],
     });
-
+    console.log(newChat, 'newChat');
     const savedChat = await newChat.save();
-
-    // CHECK IF THE USERCHATS EXISTS
     const userChats = await UserChats.find({ userId: userId });
+    console.log(userChats, 'userChats');
 
-    // IF DOESN'T EXIST CREATE A NEW ONE AND ADD THE CHAT IN THE CHATS ARRAY
     if (!userChats.length) {
       const newUserChats = new UserChats({
         userId: userId,
@@ -205,10 +186,8 @@ app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
           },
         ],
       });
-
       await newUserChats.save();
     } else {
-      // IF EXISTS, PUSH THE CHAT TO THE EXISTING ARRAY
       await UserChats.updateOne(
         { userId: userId },
         {
@@ -220,7 +199,6 @@ app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
           },
         }
       );
-
       res.status(201).send(newChat._id);
     }
   } catch (err) {
@@ -229,8 +207,25 @@ app.post("/api/chats", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
-  const userId = req.auth.userId;
+app.get("/api/userchats", async (req, res) => {
+  console.log(req);
+  let userId;
+  const authHeader = req.headers.authorization;
+  console.log(authHeader, 'authHeader');
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("Authorization token missing or invalid.");
+  }
+  const token = authHeader.split(" ")[1];
+  console.log(token, 'token');
+  try {
+    console.log('try');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userId = decoded.id;
+    console.log(userId, 'userId');
+  } catch (err) {
+    console.log(err, 'error occurred');
+    return res.status(401).send("Invalid or expired token.");
+  }
 
   try {
     const userChats = await UserChats.find({ userId });
@@ -242,8 +237,24 @@ app.get("/api/userchats", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
-  const userId = req.auth.userId;
+app.get("/api/chats/:id", async (req, res) => {
+  let userId;
+  const authHeader = req.headers.authorization;
+  console.log(authHeader, 'authHeader');
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("Authorization token missing or invalid.");
+  }
+  const token = authHeader.split(" ")[1];
+  console.log(token, 'token');
+  try {
+    console.log('try');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userId = decoded.id;
+    console.log(userId, 'userId');
+  } catch (err) {
+    console.log(err, 'error occurred');
+    return res.status(401).send("Invalid or expired token.");
+  }
 
   try {
     const Chat = await chat.findOne({ _id: req.params.id, userId });
@@ -256,8 +267,25 @@ app.get("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
 });
 
 
-app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
-  const userId = req.auth.userId;
+app.put("/api/chats/:id",  async (req, res) => {
+  console.log(req);
+  let userId;
+  const authHeader = req.headers.authorization;
+  console.log(authHeader, 'authHeader');
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).send("Authorization token missing or invalid.");
+  }
+  const token = authHeader.split(" ")[1];
+  console.log(token, 'token');
+  try {
+    console.log('try');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    userId = decoded.id;
+    console.log(userId, 'userId');
+  } catch (err) {
+    console.log(err, 'error occurred');
+    return res.status(401).send("Invalid or expired token.");
+  }
   const { question, answer, img } = req.body;
 
   // Ensure the question exists; first message must be from the user
@@ -315,15 +343,11 @@ app.put("/api/chats/:id", ClerkExpressRequireAuth(), async (req, res) => {
   }
 });
 
-
-
-
-
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  console.log(err.message);
-  res.status(401).send("Unauthenticated!");
-});
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   console.log(err.message);
+//   res.status(401).send("Unauthenticated!");
+// });
 
 
 

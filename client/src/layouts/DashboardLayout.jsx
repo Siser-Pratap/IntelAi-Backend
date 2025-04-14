@@ -2,13 +2,24 @@
 
 import { Outlet, useNavigate } from "react-router-dom";
 import "./dashboardlayout.css";
-import { useAuth } from "@clerk/clerk-react";
 import { useEffect } from "react";
 import ChatList from "../components/ChatList";
+import {jwtDecode} from 'jwt-decode';
 
 const DashboardLayout = () => {
-  const { userId, isLoaded } = useAuth();
-
+  let isLoaded;
+  let userId;
+  const token = localStorage.getItem('token');
+    if(token){
+      isLoaded=false; 
+      try {
+        const decodedToken = jwtDecode(token);
+        userId = decodedToken.id;
+        console.log('Decoded Token', decodedToken);
+      } catch (error) {
+        console.error("Invalid Token:", error);
+      }
+    };
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,7 +28,7 @@ const DashboardLayout = () => {
     }
   }, [isLoaded, userId, navigate]);
 
-  if (!isLoaded) return "Loading...";
+  // if (!isLoaded) return "Loading...";
 
   return (
     <div className="dashboardLayout">

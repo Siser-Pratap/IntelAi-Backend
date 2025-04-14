@@ -48,7 +48,6 @@ const NewPrompt = ({ data }) => {
     mutationFn: async () => {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chats/${data._id}`, {
         method: "PUT",
-        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -153,8 +152,8 @@ const NewPrompt = ({ data }) => {
         <div className="flex  justify-between items-center gap-[10px]">
         <input className="p-[20px] text-[#ececec] bg-[#2c2937] mb-[20px] rounded-[20px] border-none outline-none" type="text" name="text" placeholder="Ask anything..." />
         <button className="bg-[#2c2937] rounded-[20px] p-[10px] mb-[20px]">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="size-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75 12 3m0 0 3.75 3.75M12 3v18" />
             </svg>
         </button>
         </div>
