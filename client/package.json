@@ -13,6 +13,8 @@
     "@clerk/clerk-react": "^5.4.0",
     "@google/generative-ai": "^0.17.1",
     "@tanstack/react-query": "^5.53.1",
+    "axios": "^1.8.4",
+    "dotenv": "^16.5.0",
     "express": "^4.19.2",
     "imagekit": "^5.1.0",
     "imagekitio-react": "^4.2.0",

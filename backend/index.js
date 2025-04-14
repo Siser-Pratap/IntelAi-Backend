@@ -10,14 +10,18 @@ import UserChats from "./models/userChats.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import connectDb from "./mongodb/connect.js";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+import User from "./models/User.js";
 
 
 
+
+
+dotenv.config();
 
 const port = process.env.PORT || 3000;
 const app = express();
-
-dotenv.config();
 
 
 
@@ -31,12 +35,20 @@ const __dirname = path.dirname(__filename);
 
 
 
+// const corsOptions = {
+//   // origin: process.env.CLIENT_URL,
+//   // credentials:true,
+// }
+
 const corsOptions = {
-  // origin: process.env.CLIENT_URL,
-  // credentials:true,
-}
+  origin: "*", // Allow all origins
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow all HTTP methods
+  allowedHeaders: "Content-Type,Authorization", // Allow specific headers
+};
 
 app.use(cors(corsOptions));
+
 
 
 
@@ -92,6 +104,73 @@ const imagekit = new ImageKit({
 app.get("/api/upload", (req, res) => {
   const result = imagekit.getAuthenticationParameters();
   res.send(result);
+});
+
+app.post("/api/login", async(req, res)=>{
+  const {email, password} = req.body;
+  console.log({email, password});
+  try {
+    const user = await User.findOne({email});
+    console.log(user);
+    if(!user){
+      return res.status(404).json({message:"User not found "});
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log(isPasswordValid);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+    
+    const token = jwt.sign({ id: user._id, email: user.email },process.env.JWT_SECRET,{ expiresIn: "24h" });
+    console.log(token);
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+      },
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.post("/api/signup", async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    const savedUser = await newUser.save();
+
+    res.status(201).json({
+      message: "Signup successful",
+      user: {
+        id: savedUser._id,
+        email: savedUser.email,
+        name: savedUser.name,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 app.get("/", async(req, res)=>{

@@ -1,9 +1,53 @@
-
+import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const SignUpPage = () => {
+    const navigate = useNavigate();
+    const [loading, setloading] = useState(false);
+    const [message, setmessage] = useState('');
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        password: "",
+    });
+    const [error, setError] = useState("");
+
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            [id]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setloading(true);
+            const res = await axios.post(
+                `${import.meta.env.VITE_PUBLIC_BACKEND_URL}/api/signup`,
+                formData
+            );
+            if (res.status === 201) {
+                setloading(false);
+                setmessage('User Signup successful, Redirecting to login');
+                navigate("/sign-in");
+            } else {
+                setloading(false);
+                setError(res.data.message || "Signup failed");
+            }
+        } catch (error) {
+            setloading(false);
+            console.error(error.message);
+            setError(error.response?.data?.message || "Internal server error");
+        }
+    };
+
     return (
         <div className="flex items-center justify-center h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800">
             <form
+                onSubmit={handleSubmit}
                 className="bg-gray-900 shadow-lg rounded-lg px-8 pt-6 pb-8 w-full max-w-sm transform transition-all duration-500 hover:scale-105 hover:shadow-2xl"
             >
                 <h2 className="text-3xl font-bold text-center mb-6 text-white">
@@ -21,6 +65,8 @@ const SignUpPage = () => {
                         id="name"
                         type="text"
                         placeholder="Enter your name"
+                        value={formData.name}
+                        onChange={handleChange}
                     />
                 </div>
                 <div className="mb-4">
@@ -35,6 +81,8 @@ const SignUpPage = () => {
                         id="email"
                         type="email"
                         placeholder="Enter your email"
+                        value={formData.email}
+                        onChange={handleChange}
                     />
                 </div>
                 <div className="mb-6">
@@ -49,14 +97,16 @@ const SignUpPage = () => {
                         id="password"
                         type="password"
                         placeholder="Enter your password"
+                        value={formData.password}
+                        onChange={handleChange}
                     />
                 </div>
                 <div className="flex items-center justify-between">
                     <button
                         className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transform transition-all duration-300 hover:scale-105"
-                        type="button"
+                        type="submit"
                     >
-                        Sign Up
+                        {loading?'Signing Up':'Sign Up'}
                     </button>
                     <a
                         className="inline-block align-baseline font-bold text-sm text-blue-400 hover:text-blue-600 transform transition-all duration-300"
@@ -65,6 +115,16 @@ const SignUpPage = () => {
                         Already have an account?
                     </a>
                 </div>
+                {error && (
+                    <p className="text-red-500 text-sm mt-4 text-center">
+                        {error}
+                    </p>
+                )}
+                {message && (
+                    <p className="text-blue-600 text-sm mt-4 text-center">
+                        {message}
+                    </p>
+                )}
             </form>
         </div>
     );
