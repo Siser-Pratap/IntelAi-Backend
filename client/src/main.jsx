@@ -5,6 +5,7 @@ import {HomePage, ChatPage, DashBoard, SignInPage, SignUpPage} from "./routes"
 import RootLayout from './layouts/RootLayout.jsx'
 import DashboardLayout from './layouts/DashboardLayout.jsx'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import NotFoundPage from './components/NotFoundPage.jsx'
 
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
             element: <ChatPage />,
           },
         ],
+      },
+      {
+        path: "*", // Wildcard route for 404
+        element: <NotFoundPage />,
       },
     ]
     }]);

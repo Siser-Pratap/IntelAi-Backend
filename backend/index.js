@@ -9,13 +9,15 @@ import chat from "./models/Chat.js";
 import UserChats from "./models/userChats.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import connectDb from "./mongodb/connect.js";
-
+import dotenv from "dotenv";
 
 
 
 
 const port = process.env.PORT || 3000;
 const app = express();
+
+dotenv.config();
 
 
 
@@ -30,8 +32,8 @@ const __dirname = path.dirname(__filename);
 
 
 const corsOptions = {
-  origin: process.env.CLIENT_URL,
-  credentials:true,
+  // origin: process.env.CLIENT_URL,
+  // credentials:true,
 }
 
 app.use(cors(corsOptions));
@@ -244,10 +246,6 @@ app.use((err, req, res, next) => {
   res.status(401).send("Unauthenticated!");
 });
 
-// PRODUCTION
-app.use(express.static(path.join(__dirname, "../client/dist")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
-});
+
 
