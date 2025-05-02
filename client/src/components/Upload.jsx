@@ -1,6 +1,3 @@
-
-
-
 import { IKContext, IKImage, IKUpload } from "imagekitio-react";
 import { useRef } from "react";
 
