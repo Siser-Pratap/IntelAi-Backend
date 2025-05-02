@@ -11,7 +11,7 @@ const DashboardPage = () => {
   const mutation = useMutation({
     mutationFn: (text) => {
       console.log('token', localStorage.getItem('token'));
-      return fetch(`${import.meta.env.VITE_API_URL}/api/chats`, {
+      return fetch(`${import.meta.env.VITE_PUBLIC_BACKEND_URL}/api/chats`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

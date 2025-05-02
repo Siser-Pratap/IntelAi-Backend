@@ -208,17 +208,15 @@ app.post("/api/chats", async (req, res) => {
 });
 
 app.get("/api/userchats", async (req, res) => {
-  console.log(req);
   let userId;
+  console.log(req.headers, 'req.headers');
   const authHeader = req.headers.authorization;
-  console.log(authHeader, 'authHeader');
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  const token = authHeader.split(" ")[1];
+  if (!token || !authHeader.startsWith("Bearer ")) {
     return res.status(401).send("Authorization token missing or invalid.");
   }
-  const token = authHeader.split(" ")[1];
   console.log(token, 'token');
   try {
-    console.log('try');
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     userId = decoded.id;
     console.log(userId, 'userId');
@@ -229,8 +227,7 @@ app.get("/api/userchats", async (req, res) => {
 
   try {
     const userChats = await UserChats.find({ userId });
-
-    res.status(200).send(userChats[0].chats);
+     res.status(200).send(userChats[0]?.chats || []);
   } catch (err) {
     console.log(err);
     res.status(500).send("Error fetching userchats!");
