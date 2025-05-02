@@ -1,6 +1,6 @@
 {
   "name": "chatnow",
-  "private": true,
+  "private": "true",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -23,7 +23,7 @@
     "react-dom": "^18.3.1",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.26.0",
-    "react-type-animation": "^3.2.0",
+    "react-type-animation": "^3.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
