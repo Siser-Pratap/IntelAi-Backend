@@ -5,6 +5,7 @@ import path from "path";
 import url, { fileURLToPath } from "url";
 import ImageKit from "imagekit";
 import mongoose from "mongoose";
+// import chat from "./models/Chat.js";
 import chat from "./models/Chat.js";
 import UserChats from "./models/userChats.js";
 import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
@@ -13,6 +14,8 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "./models/User.js";
+import authMiddleware from "./middleware.js";
+
 
 dotenv.config();
 
@@ -145,67 +148,124 @@ app.get("/", async(req, res)=>{
   // console.log(response.data[0].url);
 });
 
-app.post("/api/chats", async (req, res) => {
-  let userId;
-  const authHeader = req.headers.authorization;
-  console.log(authHeader, 'authHeader');
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Authorization token missing or invalid.");
-  }
-  const token = authHeader.split(" ")[1];
-  console.log(token, 'token');
-  try {
-    console.log('try');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    userId = decoded.id;
-    console.log(userId, 'userId');
-  } catch (err) {
-    console.log(err, 'error occurred');
-    return res.status(401).send("Invalid or expired token.");
-  }
-  const { text } = req.body;
-  console.log(text, 'text');
+// app.post("/api/chats", async (req, res) => {
+//   let userId;
+//   const authHeader = req.headers.authorization;
+//   console.log(authHeader, 'authHeader');
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     return res.status(401).send("Authorization token missing or invalid.");
+//   }
+//   const token = authHeader.split(" ")[1];
+//   console.log(token, 'token');
+//   try {
+//     console.log('try');
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     userId = decoded.id;
+//     console.log(userId, 'userId');
+//   } catch (err) {
+//     console.log(err, 'error occurred');
+//     return res.status(401).send("Invalid or expired token.");
+//   }
+//   const { text } = req.body;
+//   console.log(text, 'text');
 
+//   try {
+//     const newChat = new chat({
+//       userId: userId,
+//       history: [{ role: "user", parts: [{ text }] }],
+//     });
+//     console.log(newChat, 'newChat');
+//     const savedChat = await newChat.save();
+//     const userChats = await UserChats.find({ userId: userId });
+//     console.log(userChats, 'userChats');
+
+//     if (!userChats.length) {
+//       const newUserChats = new UserChats({
+//         userId: userId,
+//         chats: [
+//           {
+//             _id: savedChat._id,
+//             title: text.substring(0, 40),
+//           },
+//         ],
+//       });
+//       await newUserChats.save();
+//     } else {
+//       await UserChats.updateOne(
+//         { userId: userId },
+//         {
+//           $push: {
+//             chats: {
+//               _id: savedChat._id,
+//               title: text.substring(0, 40),
+//             },
+//           },
+//         }
+//       );
+//       res.status(201).send(newChat._id);
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send("Error creating chat!");
+//   }
+// });
+
+
+app.post("/api/chats", async(req, res)=>{
+  const userId = authMiddleware(req, res);
+  const {type} = req.body;
   try {
-    const newChat = new chat({
+    const chat = new chat({
       userId: userId,
-      history: [{ role: "user", parts: [{ text }] }],
+      type: type || "general",
+      messages: [],
     });
-    console.log(newChat, 'newChat');
-    const savedChat = await newChat.save();
-    const userChats = await UserChats.find({ userId: userId });
-    console.log(userChats, 'userChats');
 
-    if (!userChats.length) {
-      const newUserChats = new UserChats({
-        userId: userId,
-        chats: [
-          {
-            _id: savedChat._id,
-            title: text.substring(0, 40),
-          },
-        ],
-      });
-      await newUserChats.save();
-    } else {
-      await UserChats.updateOne(
-        { userId: userId },
-        {
-          $push: {
-            chats: {
-              _id: savedChat._id,
-              title: text.substring(0, 40),
-            },
-          },
-        }
-      );
-      res.status(201).send(newChat._id);
-    }
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Error creating chat!");
+    await chat.save();
+    res.status(201).json({ message: "Chat created successfully", chatId: chat._id });
+  } catch (error) {
+    res.status(500).json({ message: "Error creating chat", error });
   }
 });
+
+app.get("/api/:chatId", async (req, res) => {
+  const userId = authMiddleware(req, res);
+  const { chatId } = req.params;
+  try {
+    const chat = await chat.findOne({ _id: chatId, userId });
+    if (!chat) {
+      return res.status(404).json({ message: "Chat not found" });
+    }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching chat", error });
+  }
+});
+
+app.post("/api/:chatId/messages", async(req, res)=>{
+  const userId = authMiddleware(req, res);
+  const {chatId} = req.params;
+  const {content, image} = req.body;
+
+  try {
+    const chat = await chat.findOne({_id: chatId, userId});
+    if(!chat){
+      return res.status(404).json({message:"Chat not found"});
+    }
+    const message = {
+      role: "user",
+      content,
+      timestamp: new Date(),
+      image,
+    };
+    chat.messages.push(message);
+    await chat.save();
+    res.status(200).json({message:"Message sent successfully", chat});
+  } catch (error) {
+    res.status(500).json({message:"Error sending message", error});
+  }
+})
+
 
 app.get("/api/userchats", async (req, res) => {
   let userId;
