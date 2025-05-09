@@ -15,6 +15,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 import authMiddleware from "./middleware.js";
+import NewChat from "./models/newChat.js";
+import { stat } from "fs";
 
 
 dotenv.config();
@@ -405,6 +407,44 @@ app.put("/api/chats/:id",  async (req, res) => {
 //   console.log(err.message);
 //   res.status(401).send("Unauthenticated!");
 // });
+
+
+
+
+
+app.post("/api/chats/:id", async(req, res)=>{
+  const {id} = req.params;
+  const {role, message, image} = req.body;
+  console.log(message, image);
+
+  const existingChat = await NewChat.findById(id);
+  if(existingChat){
+    existingChat.messages.push({
+      role:role,
+      message:message,
+      images:image? image : "",
+    });
+    res.json({message:"new message added", existingChat}, status(201));
+  }
+  else{
+    const newChat = new NewChat({
+      _id:id, 
+      messages:[
+        {
+          role:role, 
+          message:message,
+          images:image? image : "",
+        }
+      ]
+    });
+    await newChat.save();
+    res.json({message:"new chat created", newChat}, status(201));
+  }
+  });
+
+
+
+
 
 
 
