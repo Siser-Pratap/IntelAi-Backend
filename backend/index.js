@@ -418,7 +418,7 @@ app.post("/api/chats/:id", async(req, res)=>{
   console.log(message, image);
 
   const existingChat = await NewChat.findById(id);
-  if(existingChat){
+  if(existingChat && id){
     existingChat.messages.push({
       role:role,
       message:message,
