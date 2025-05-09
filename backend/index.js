@@ -213,194 +213,194 @@ app.get("/", async(req, res)=>{
 // });
 
 
-app.post("/api/chats", async(req, res)=>{
-  const userId = authMiddleware(req, res);
-  const {type} = req.body;
-  try {
-    const chat = new chat({
-      userId: userId,
-      type: type || "general",
-      messages: [],
-    });
+// app.post("/api/chats", async(req, res)=>{
+//   const userId = authMiddleware(req, res);
+//   const {type} = req.body;
+//   try {
+//     const chat = new chat({
+//       userId: userId,
+//       type: type || "general",
+//       messages: [],
+//     });
 
-    await chat.save();
-    res.status(201).json({ message: "Chat created successfully", chatId: chat._id });
-  } catch (error) {
-    res.status(500).json({ message: "Error creating chat", error });
-  }
-});
+//     await chat.save();
+//     res.status(201).json({ message: "Chat created successfully", chatId: chat._id });
+//   } catch (error) {
+//     res.status(500).json({ message: "Error creating chat", error });
+//   }
+// });
 
-app.get("/api/:chatId", async (req, res) => {
-  const userId = authMiddleware(req, res);
-  const { chatId } = req.params;
-  try {
-    const chat = await chat.findOne({ _id: chatId, userId });
-    if (!chat) {
-      return res.status(404).json({ message: "Chat not found" });
-    }
-    res.status(200).json(chat);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching chat", error });
-  }
-});
+// app.get("/api/:chatId", async (req, res) => {
+//   const userId = authMiddleware(req, res);
+//   const { chatId } = req.params;
+//   try {
+//     const chat = await chat.findOne({ _id: chatId, userId });
+//     if (!chat) {
+//       return res.status(404).json({ message: "Chat not found" });
+//     }
+//     res.status(200).json(chat);
+//   } catch (error) {
+//     res.status(500).json({ message: "Error fetching chat", error });
+//   }
+// });
 
-app.post("/api/:chatId/messages", async(req, res)=>{
-  const userId = authMiddleware(req, res);
-  const {chatId} = req.params;
-  const {content, image} = req.body;
+// app.post("/api/:chatId/messages", async(req, res)=>{
+//   const userId = authMiddleware(req, res);
+//   const {chatId} = req.params;
+//   const {content, image} = req.body;
 
-  try {
-    const chat = await chat.findOne({_id: chatId, userId});
-    if(!chat){
-      return res.status(404).json({message:"Chat not found"});
-    }
-    const message = {
-      role: "user",
-      content,
-      timestamp: new Date(),
-      image,
-    };
-    chat.messages.push(message);
-    await chat.save();
-    res.status(200).json({message:"Message sent successfully", chat});
-  } catch (error) {
-    res.status(500).json({message:"Error sending message", error});
-  }
-})
-
-
-app.get("/api/userchats", async (req, res) => {
-  let userId;
-  console.log(req.headers, 'req.headers');
-  const authHeader = req.headers.authorization;
-  const token = authHeader.split(" ")[1];
-  if (!token || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Authorization token missing or invalid.");
-  }
-  console.log(token, 'token');
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    userId = decoded.id;
-    console.log(userId, 'userId');
-  } catch (err) {
-    console.log(err, 'error occurred');
-    return res.status(401).send("Invalid or expired token.");
-  }
-
-  try {
-    const userChats = await UserChats.find({ userId });
-     res.status(200).send(userChats[0]?.chats || []);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Error fetching userchats!");
-  }
-});
-
-app.get("/api/chats/:id", async (req, res) => {
-  let userId;
-  const authHeader = req.headers.authorization;
-  console.log(authHeader, 'authHeader');
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Authorization token missing or invalid.");
-  }
-  const token = authHeader.split(" ")[1];
-  console.log(token, 'token');
-  try {
-    console.log('try');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    userId = decoded.id;
-    console.log(userId, 'userId');
-  } catch (err) {
-    console.log(err, 'error occurred');
-    return res.status(401).send("Invalid or expired token.");
-  }
-
-  try {
-    const Chat = await chat.findOne({ _id: req.params.id, userId });
-
-    res.status(200).send(Chat);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send("Error fetching chat!");
-  }
-});
+//   try {
+//     const chat = await chat.findOne({_id: chatId, userId});
+//     if(!chat){
+//       return res.status(404).json({message:"Chat not found"});
+//     }
+//     const message = {
+//       role: "user",
+//       content,
+//       timestamp: new Date(),
+//       image,
+//     };
+//     chat.messages.push(message);
+//     await chat.save();
+//     res.status(200).json({message:"Message sent successfully", chat});
+//   } catch (error) {
+//     res.status(500).json({message:"Error sending message", error});
+//   }
+// })
 
 
-app.put("/api/chats/:id",  async (req, res) => {
-  console.log(req);
-  let userId;
-  const authHeader = req.headers.authorization;
-  console.log(authHeader, 'authHeader');
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).send("Authorization token missing or invalid.");
-  }
-  const token = authHeader.split(" ")[1];
-  console.log(token, 'token');
-  try {
-    console.log('try');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    userId = decoded.id;
-    console.log(userId, 'userId');
-  } catch (err) {
-    console.log(err, 'error occurred');
-    return res.status(401).send("Invalid or expired token.");
-  }
-  const { question, answer, img } = req.body;
+// app.get("/api/userchats", async (req, res) => {
+//   let userId;
+//   console.log(req.headers, 'req.headers');
+//   const authHeader = req.headers.authorization;
+//   const token = authHeader.split(" ")[1];
+//   if (!token || !authHeader.startsWith("Bearer ")) {
+//     return res.status(401).send("Authorization token missing or invalid.");
+//   }
+//   console.log(token, 'token');
+//   try {
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     userId = decoded.id;
+//     console.log(userId, 'userId');
+//   } catch (err) {
+//     console.log(err, 'error occurred');
+//     return res.status(401).send("Invalid or expired token.");
+//   }
 
-  // Ensure the question exists; first message must be from the user
-  if (!question) {
-    return res.status(400).send("First message must be from the user.");
-  }
+//   try {
+//     const userChats = await UserChats.find({ userId });
+//      res.status(200).send(userChats[0]?.chats || []);
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send("Error fetching userchats!");
+//   }
+// });
 
-  // Create new items array starting with the user's input
-  const newItems = [
-    {
-      role: "user",
-      parts: [{ text: question }],
-      ...(img && { img }),
-    },
-    {
-      role: "model",
-      parts: [{ text: answer }],
-    },
-  ];
+// app.get("/api/chats/:id", async (req, res) => {
+//   let userId;
+//   const authHeader = req.headers.authorization;
+//   console.log(authHeader, 'authHeader');
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     return res.status(401).send("Authorization token missing or invalid.");
+//   }
+//   const token = authHeader.split(" ")[1];
+//   console.log(token, 'token');
+//   try {
+//     console.log('try');
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     userId = decoded.id;
+//     console.log(userId, 'userId');
+//   } catch (err) {
+//     console.log(err, 'error occurred');
+//     return res.status(401).send("Invalid or expired token.");
+//   }
 
-  try {
-    // Fetch the existing chat to validate the current state of history
-    const Chat = await chat.findOne({ _id: req.params.id, userId });
+//   try {
+//     const Chat = await chat.findOne({ _id: req.params.id, userId });
 
-    if (!Chat) {
-      return res.status(404).send("Chat not found.");
-    }
+//     res.status(200).send(Chat);
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).send("Error fetching chat!");
+//   }
+// });
 
-    // Check if the current history is empty or needs validation
-    if (!Chat.history || Chat.history.length === 0) {
-      // Ensure the history starts with a user role
-      if (newItems[0].role !== "user") {
-        return res
-          .status(400)
-          .send("Chat history must start with a user message.");
-      }
-    }
 
-    // Update chat history with validated new items
-    const updatedChat = await chat.updateOne(
-      { _id: req.params.id, userId },
-      {
-        $push: {
-          history: {
-            $each: newItems,
-          },
-        },
-      }
-    );
+// app.put("/api/chats/:id",  async (req, res) => {
+//   console.log(req);
+//   let userId;
+//   const authHeader = req.headers.authorization;
+//   console.log(authHeader, 'authHeader');
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     return res.status(401).send("Authorization token missing or invalid.");
+//   }
+//   const token = authHeader.split(" ")[1];
+//   console.log(token, 'token');
+//   try {
+//     console.log('try');
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     userId = decoded.id;
+//     console.log(userId, 'userId');
+//   } catch (err) {
+//     console.log(err, 'error occurred');
+//     return res.status(401).send("Invalid or expired token.");
+//   }
+//   const { question, answer, img } = req.body;
 
-    res.status(200).send(updatedChat);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error adding conversation!");
-  }
-});
+//   // Ensure the question exists; first message must be from the user
+//   if (!question) {
+//     return res.status(400).send("First message must be from the user.");
+//   }
+
+//   // Create new items array starting with the user's input
+//   const newItems = [
+//     {
+//       role: "user",
+//       parts: [{ text: question }],
+//       ...(img && { img }),
+//     },
+//     {
+//       role: "model",
+//       parts: [{ text: answer }],
+//     },
+//   ];
+
+//   try {
+//     // Fetch the existing chat to validate the current state of history
+//     const Chat = await chat.findOne({ _id: req.params.id, userId });
+
+//     if (!Chat) {
+//       return res.status(404).send("Chat not found.");
+//     }
+
+//     // Check if the current history is empty or needs validation
+//     if (!Chat.history || Chat.history.length === 0) {
+//       // Ensure the history starts with a user role
+//       if (newItems[0].role !== "user") {
+//         return res
+//           .status(400)
+//           .send("Chat history must start with a user message.");
+//       }
+//     }
+
+//     // Update chat history with validated new items
+//     const updatedChat = await chat.updateOne(
+//       { _id: req.params.id, userId },
+//       {
+//         $push: {
+//           history: {
+//             $each: newItems,
+//           },
+//         },
+//       }
+//     );
+
+//     res.status(200).send(updatedChat);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Error adding conversation!");
+//   }
+// });
 
 // app.use((err, req, res, next) => {
 //   console.error(err.stack);
@@ -409,38 +409,56 @@ app.put("/api/chats/:id",  async (req, res) => {
 // });
 
 
+app.post("/api/chats/", authMiddleware, async(req, res)=>{
+  console.log("hit2");
+  const {role, message, image} = req.body;
+  console.log(req, req.body);
+  const userId = req.userId;
+  const newChat = new NewChat({
+    _id: new mongoose.Types.ObjectId(),
+    userId: userId,
+    messages: [
+      {
+        role: role,
+        messages: message,
+        images: image ? image : "",
+      },
+    ],
+  });
+  console.log({role, message, image, newChat, userId, "welcome":"welcome"});
+  await newChat.save();
+  res.json({status: 201, message: "New Chat created", chatId: newChat._id});
+})
+
+
+app.get("/api/chats/:id", async(req, res)=>{
+  const {id} = req.params;
+  const existingChat = await NewChat.findById(id);
+  return res.status(201).json({chats: existingChat.messages});
+})
+
 
 
 
 app.post("/api/chats/:id", async(req, res)=>{
   const {id} = req.params;
   const {role, message, image} = req.body;
-  console.log(message, image);
+  console.log(id, message, image);
 
   const existingChat = await NewChat.findById(id);
+  console.log(existingChat);
   if(existingChat && id){
     existingChat.messages.push({
       role:role,
-      message:message,
+      messages:message,
       images:image? image : "",
     });
-    res.json({message:"new message added", existingChat}, status(201));
+    await existingChat.save(); // Save the updated chat to the database
+    res.json({status: 201, message: "Existing Chat updated"});
+  } else {
+    res.status(404).json({status: 404, message: "Chat not found"});
   }
-  else{
-    const newChat = new NewChat({
-      _id:id, 
-      messages:[
-        {
-          role:role, 
-          message:message,
-          images:image? image : "",
-        }
-      ]
-    });
-    await newChat.save();
-    res.json({message:"new chat created", newChat}, status(201));
-  }
-  });
+});
 
 
 
