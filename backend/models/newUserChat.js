@@ -10,6 +10,7 @@ const newUserChatsSchema = new mongoose.Schema({
         {
             chatId: mongoose.Schema.Types.ObjectId,
             message: String,
+            date: Date,
         }
     ]
 });

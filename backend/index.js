@@ -412,7 +412,7 @@ app.get("/", async(req, res)=>{
 
 app.post("/api/chats/", authMiddleware, async(req, res)=>{
   console.log("hit2");
-  const {role, message, image} = req.body;
+  const {role, message, image, date} = req.body;
   console.log(req, req.body);
   const userId = req.userId;
   const newChat = new NewChat({
@@ -423,6 +423,7 @@ app.post("/api/chats/", authMiddleware, async(req, res)=>{
         role: role,
         messages: message,
         images: image ? image : "",
+        date: date,
       },
     ],
   });
@@ -432,15 +433,19 @@ app.post("/api/chats/", authMiddleware, async(req, res)=>{
 })
 
 
-app.get("/api/chats/:id", async(req, res)=>{
+app.get("/api/chats/:id",authMiddleware, async(req, res)=>{
+  const userId = req.userId;
+
   const {id} = req.params;
+  console.log(id);
   const existingChat = await NewChat.findById(id);
+  console.log(existingChat);
   return res.status(201).json({chats: existingChat.messages});
 })
 
 app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
   const {id} = req.params;
-  const {role, message, image} = req.body;
+  const {role, message, image, date} = req.body;
   console.log(id, message, image);
   const userId = req.userId;
   if(!userId){
@@ -454,6 +459,7 @@ app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
       role:role,
       messages:message,
       images:image? image : "",
+      date: date
     });
     await existingChat.save(); // Save the updated chat to the database
     res.json({status: 201, message: "Existing Chat updated"});
@@ -467,7 +473,7 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
   console.log(userId);
 
   try {
-    const {chatId, message} = req.body;
+    const {chatId, message, date} = req.body;
     console.log(chatId, message);
     if (!chatId || !message) {
       return res.status(400).json({ message: "chatId and message are required" });
@@ -481,7 +487,8 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
         chats:[
           {
             chatId: chatId,
-            message: message
+            message: message, 
+            date: date
           }
         ]
       });
@@ -499,7 +506,16 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
   }
 });
 
-
+app.delete("/api/chats", async (req, res) => {
+  
+  try {
+    const result = await NewChat.deleteMany({ });
+    res.status(200).json({ message: "All chats deleted successfully", deletedCount: result.deletedCount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error deleting chats", error });
+  }
+});
 
 
 
