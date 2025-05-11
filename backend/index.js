@@ -17,11 +17,12 @@ import User from "./models/User.js";
 import authMiddleware from "./middleware.js";
 import NewChat from "./models/newChat.js";
 import { stat } from "fs";
+import newUserChats from "./models/newUserChat.js";
 
 
 dotenv.config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -437,13 +438,14 @@ app.get("/api/chats/:id", async(req, res)=>{
   return res.status(201).json({chats: existingChat.messages});
 })
 
-
-
-
-app.post("/api/chats/:id", async(req, res)=>{
+app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
   const {id} = req.params;
   const {role, message, image} = req.body;
   console.log(id, message, image);
+  const userId = req.userId;
+  if(!userId){
+    res.json({status:500, message:"Please Login First"});
+  }
 
   const existingChat = await NewChat.findById(id);
   console.log(existingChat);
@@ -457,6 +459,43 @@ app.post("/api/chats/:id", async(req, res)=>{
     res.json({status: 201, message: "Existing Chat updated"});
   } else {
     res.status(404).json({status: 404, message: "Chat not found"});
+  }
+});
+
+app.post("/api/userChats", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  console.log(userId);
+
+  try {
+    const {chatId, message} = req.body;
+    console.log(chatId, message);
+    if (!chatId || !message) {
+      return res.status(400).json({ message: "chatId and message are required" });
+    }
+    const user = await newUserChats.findOne({ userId: userId });
+
+    if (!user) {
+      const newUserChat = new newUserChats({
+        _id: new mongoose.Types.ObjectId,
+        userId: userId,
+        chats:[
+          {
+            chatId: chatId,
+            message: message
+          }
+        ]
+      });
+      await newUserChat.save();
+      res.json({status: 201, message: "new User Chat added"});
+    }
+    else{
+      user.chats.push({ chatId, message });
+      await user.save();
+      res.status(201).json({ message: "User chat added successfully" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error", error });
   }
 });
 
