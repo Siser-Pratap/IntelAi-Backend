@@ -18,6 +18,7 @@ import authMiddleware from "./middleware.js";
 import NewChat from "./models/newChat.js";
 import { stat } from "fs";
 import newUserChats from "./models/newUserChat.js";
+import UserProfile from "./models/userProfile.js";
 
 
 dotenv.config();
@@ -516,6 +517,37 @@ app.delete("/api/chats", async (req, res) => {
     res.status(500).json({ message: "Error deleting chats", error });
   }
 });
+
+
+app.get("/api/userProfile/:email", async (req, res) => {
+  try {
+    const { email } = req.params;
+    const userProfile = await UserProfile.findOne({ email });
+    if (!userProfile) {
+      return res.status(404).json({ message: "User profile not found" });
+    }
+    res.status(200).json(userProfile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching user profile", error });
+  }
+});
+
+app.post("/api/userProfile", async (req, res) => {
+  try {
+    const { name, email, phone, location, bio, date } = req.body;
+    const userProfile = new UserProfile({ name, email, phone, location, bio, date });
+    await userProfile.save();
+    res.status(201).json({ message: "User profile created", userProfile });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error creating user profile", error });
+  }
+});
+
+
+
+
 
 
 
