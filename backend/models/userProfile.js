@@ -22,6 +22,13 @@ const userProfileSchema = new mongoose.Schema({
   date: {
     type: Date,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
+  avatar:{
+    type: String,
+  },
 });
 
 const UserProfile = mongoose.model('UserProfile', userProfileSchema);

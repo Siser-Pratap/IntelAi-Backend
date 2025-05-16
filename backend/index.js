@@ -507,6 +507,27 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
   }
 });
 
+app.get('/api/userChats', authMiddleware, async(req, res)=>{
+ const userId = req.userId;
+ try {
+  const userChats = await newUserChats.findOne({userId});
+  let messageCount=0;
+  if (userChats && userChats.chats && userChats.chats.length > 0) {
+    for (let chat of userChats.chats) {
+      const chatDoc = await NewChat.findById(chat.chatId);
+      chat.messageCount = chatDoc ? (chatDoc.messages ? chatDoc.messages.length : 0) : 0;
+      console.log(chat.messageCount);
+      messageCount=chat.messageCount+messageCount;
+    }
+  }
+  console.log(messageCount);
+  res.status(200).json({chats:userChats.chats, messageCount:messageCount});
+ } catch (error) {
+  console.error(error);
+    res.status(500).json({ message: "Error updating user profile", error }); 
+ } 
+})
+
 app.delete("/api/chats", async (req, res) => {
   
   try {
@@ -519,13 +540,11 @@ app.delete("/api/chats", async (req, res) => {
 });
 
 
-app.get("/api/userProfile/:email", async (req, res) => {
+app.get("/api/userProfile",authMiddleware, async (req, res) => {
+  console.log(req.headers);
+  const userId= req.userId;
   try {
-    const { email } = req.params;
-    const userProfile = await UserProfile.findOne({ email });
-    if (!userProfile) {
-      return res.status(404).json({ message: "User profile not found" });
-    }
+    const userProfile = await UserProfile.findOne({ userId });
     res.status(200).json(userProfile);
   } catch (error) {
     console.error(error);
@@ -533,15 +552,42 @@ app.get("/api/userProfile/:email", async (req, res) => {
   }
 });
 
-app.post("/api/userProfile", async (req, res) => {
+app.post("/api/userProfile",authMiddleware,  async (req, res) => {
+  
+  const userId = req.userId;
+  console.log(userId, 'userId');
   try {
-    const { name, email, phone, location, bio, date } = req.body;
-    const userProfile = new UserProfile({ name, email, phone, location, bio, date });
+    const { name, email, phone, location, bio, avatar, date} = req.body;
+    const userProfile = new UserProfile({ name, email, phone, location, bio, date, userId, date, avatar });
     await userProfile.save();
     res.status(201).json({ message: "User profile created", userProfile });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error creating user profile", error });
+  }
+});
+
+app.put("/api/userProfile", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  try {
+    const { name, email, phone, location, bio, avatar, date } = req.body;
+    const updatedProfile = await UserProfile.findOneAndUpdate(
+      { userId },
+      { name, email, phone, location, bio, avatar, date },
+      { new: true }
+    );
+    const user = await User.findById({userId});
+    if(req.body.email!==user.email){
+      user.email = req.body.email;
+      await user.save();
+    }
+    if (!updatedProfile) {
+      return res.status(404).json({ message: "User profile not found" });
+    }
+    res.status(201).json({ message: "User profile updated", userProfile: updatedProfile });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error updating user profile", error });
   }
 });
 
