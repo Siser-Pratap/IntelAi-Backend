@@ -591,7 +591,23 @@ app.put("/api/userProfile", authMiddleware, async (req, res) => {
   }
 });
 
-
+app.post('/api/forgot-password', async(req, res)=>{
+  console.log('clicked');
+  const {email, password}=req.body;
+  console.log(email, password);
+  try {
+    const user = await User.findOne({email});
+    if(!user){
+      return res.status(404).json({message:`No user registered with ${email}`});
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password=hashedPassword;
+    await user.save();
+    return res.status(200).json({message:"Password Updated SuccessFully"});
+  } catch (error) {
+    
+  }
+})
 
 
 
