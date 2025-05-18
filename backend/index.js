@@ -1,9 +1,7 @@
 
 import express from "express";
 import cors from "cors";
-import path from "path";
 import { fileURLToPath } from "url";
-import ImageKit from "imagekit";
 import mongoose from "mongoose";
 import connectDb from "./mongodb/connect.js";
 import dotenv from "dotenv";
@@ -12,7 +10,6 @@ import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 import authMiddleware from "./middleware.js";
 import NewChat from "./models/newChat.js";
-
 import newUserChats from "./models/newUserChat.js";
 import UserProfile from "./models/userProfile.js";
 
@@ -21,7 +18,6 @@ dotenv.config();
 
 const port = process.env.PORT || 8000;
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
 
 
 
