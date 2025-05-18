@@ -32,30 +32,30 @@ const __dirname = path.dirname(__filename);
 //   // credentials:true,
 // }
 
-// const corsOptions = {
-//   origin: "*", 
-//   credentials: true, 
-//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE", 
-//   allowedHeaders: "Content-Type,Authorization", 
-// };
-
-const allowedOrigins = [
-  'https://v0-replicate-ai-chat-app.vercel.app',
-  'http://localhost:3000'
-];
-
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type,Authorization",
+  origin: "*", 
+  credentials: true, 
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", 
+  allowedHeaders: "Content-Type,Authorization", 
 };
+
+// const allowedOrigins = [
+//   'https://v0-replicate-ai-chat-app.vercel.app',
+//   'http://localhost:3000'
+// ];
+
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true,
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//   allowedHeaders: "Content-Type,Authorization",
+// };
 
 app.use(cors(corsOptions));
 // const allowedOrigins = [
@@ -454,12 +454,12 @@ app.post("/api/chats/", authMiddleware, async(req, res)=>{
 
 app.get("/api/chats/:id",authMiddleware, async(req, res)=>{
   const userId = req.userId;
-
   const {id} = req.params;
   console.log(id);
   const existingChat = await NewChat.findById(id);
+  const messages = existingChat?.messages || "";
   console.log(existingChat);
-  return res.status(201).json({chats: existingChat.messages});
+  return res.status(201).json({chats: messages});
 })
 
 app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
@@ -493,7 +493,7 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
 
   try {
     const {chatId, message, date} = req.body;
-    console.log(chatId, message);
+    console.log(chatId, message, date,  'chatId, message, date');
     if (!chatId || !message) {
       return res.status(400).json({ message: "chatId and message are required" });
     }
@@ -515,7 +515,7 @@ app.post("/api/userChats", authMiddleware, async (req, res) => {
       res.json({status: 201, message: "new User Chat added"});
     }
     else{
-      user.chats.push({ chatId, message });
+      user.chats.push({ chatId, message, date});
       await user.save();
       res.status(201).json({ message: "User chat added successfully" });
     }
