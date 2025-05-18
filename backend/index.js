@@ -32,11 +32,29 @@ const __dirname = path.dirname(__filename);
 //   // credentials:true,
 // }
 
+// const corsOptions = {
+//   origin: "*", 
+//   credentials: true, 
+//   methods: "GET,HEAD,PUT,PATCH,POST,DELETE", 
+//   allowedHeaders: "Content-Type,Authorization", 
+// };
+
+const allowedOrigins = [
+  'https://v0-replicate-ai-chat-app.vercel.app',
+  'http://localhost:3000'
+];
+
 const corsOptions = {
-  origin: "*", // Allow all origins
-  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE", // Allow all HTTP methods
-  allowedHeaders: "Content-Type,Authorization", // Allow specific headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  allowedHeaders: "Content-Type,Authorization",
 };
 
 app.use(cors(corsOptions));
