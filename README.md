@@ -186,7 +186,7 @@ Follow these steps to set up the backend project locally:
 
 ```shellscript
 git clone https://github.com/yourusername/ai-chat-app-backend.git
-cd ai-chat-app-backend
+cd backend
 ```
 
 
@@ -204,7 +204,7 @@ Create a `.env` file in the root directory with the following variables:
 
 ```plaintext
 # Server
-PORT=5000
+PORT=8000
 
 # Database
 MONGODB_URL=your mongodb url
@@ -216,23 +216,19 @@ JWT_SECRET=your_jwt_secret
 ```
 
 
-4. Start MongoDB (if running locally):
+
+
+
+4. Run the development server:
 
 ```shellscript
-mongod
-```
-
-
-5. Run the development server:
-
-```shellscript
-npm run dev
+npm start
 # or
 yarn dev
 ```
 
 
-6. The server will be running at [http://localhost:5000](http://localhost:5000)
+6. The server will be running at [http://localhost:8000](http://localhost:8000)
 
 <div id="contributing"></div>
 
