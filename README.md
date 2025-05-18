@@ -1,4 +1,10 @@
+<div align="center">
+
 ### 🚀 IntelAi - Backend
+
+</div>
+
+
 
 <div align="center">
   <p align="center">
@@ -59,7 +65,7 @@ The AI Chat App Backend is a robust, scalable server-side application that power
   </div>
 </div>
 
-<div id="tech-stacks"></div>
+<div id="tech-stack"></div>
 
 ## 🛠️ Tech Stack
 
@@ -98,6 +104,8 @@ The AI Chat App Backend is a robust, scalable server-side application that power
     <p>Containerization</p>
   </div>
 </div>
+
+
 
 <div id="implementation"></div>
 
@@ -197,29 +205,14 @@ Create a `.env` file in the root directory with the following variables:
 ```plaintext
 # Server
 PORT=5000
-NODE_ENV=development
 
 # Database
-MONGODB_URI=mongodb://localhost:27017/ai-chat-app
+MONGODB_URL=your mongodb url
 
 # Authentication
 JWT_SECRET=your_jwt_secret
-JWT_REFRESH_SECRET=your_refresh_token_secret
-JWT_EXPIRATION=1h
-JWT_REFRESH_EXPIRATION=7d
 
-# Email
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=your_email@example.com
-SMTP_PASS=your_email_password
 
-# AI Services
-OPENAI_API_KEY=your_openai_api_key
-GEMINI_API_KEY=your_gemini_api_key
-
-# Redis (optional)
-REDIS_URI=redis://localhost:6379
 ```
 
 
@@ -307,7 +300,7 @@ git push origin feature/your-feature-name
 ## 📞 Contact
 
 `<div class="contact-card">
-  <img src="https://github.com/yourusername.png" alt="Developer Avatar" width="100" height="100" class="avatar" />
+  <img src="https://github.com/Siser-Pratap.png" alt="Developer Avatar" width="100" height="100" class="avatar" />
   <div class="contact-info">
     <h3>Siser Pratap</h3>
     <p>Full Stack Developer</p>
