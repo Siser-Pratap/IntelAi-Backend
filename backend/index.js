@@ -2,13 +2,9 @@
 import express from "express";
 import cors from "cors";
 import path from "path";
-import url, { fileURLToPath } from "url";
+import { fileURLToPath } from "url";
 import ImageKit from "imagekit";
 import mongoose from "mongoose";
-// import chat from "./models/Chat.js";
-import chat from "./models/Chat.js";
-import UserChats from "./models/userChats.js";
-import { ClerkExpressRequireAuth } from "@clerk/clerk-sdk-node";
 import connectDb from "./mongodb/connect.js";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
@@ -16,7 +12,7 @@ import bcrypt from "bcryptjs";
 import User from "./models/User.js";
 import authMiddleware from "./middleware.js";
 import NewChat from "./models/newChat.js";
-import { stat } from "fs";
+
 import newUserChats from "./models/newUserChat.js";
 import UserProfile from "./models/userProfile.js";
 
@@ -26,11 +22,8 @@ dotenv.config();
 const port = process.env.PORT || 8000;
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-// const corsOptions = {
-//   // origin: process.env.CLIENT_URL,
-//   // credentials:true,
-// }
+
+
 
 const corsOptions = {
   origin: "*", 
@@ -58,34 +51,21 @@ const serverConnect = async() => {
 }
 serverConnect();
 
-const imagekit = new ImageKit({
-  urlEndpoint: process.env.IMAGE_KIT_ENDPOINT,
-  publicKey: process.env.IMAGE_KIT_PUBLIC_KEY,
-  privateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
-});
 
-app.get("/api/upload", (req, res) => {
-  const result = imagekit.getAuthenticationParameters();
-  res.send(result);
-});
+
 
 app.post("/api/login", async(req, res)=>{
   const {email, password} = req.body;
-  console.log({email, password});
   try {
     const user = await User.findOne({email});
-    console.log(user);
     if(!user){
       return res.status(404).json({message:"User not found "});
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log(isPasswordValid);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    
     const token = jwt.sign({ id: user._id, email: user.email },process.env.JWT_SECRET,{ expiresIn: "24h" });
-    console.log(token);
     res.status(200).json({
       message: "Login successful",
       token,
@@ -95,7 +75,6 @@ app.post("/api/login", async(req, res)=>{
         name: user.name,
       },
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
@@ -104,7 +83,6 @@ app.post("/api/login", async(req, res)=>{
 
 app.post("/api/signup", async (req, res) => {
   const { name, email, password } = req.body;
-
   try {
     const existingUser = await User.findOne({ email });
 
@@ -136,16 +114,9 @@ app.post("/api/signup", async (req, res) => {
   }
 });
 
-app.get("/", async(req, res)=>{
-  res.send("Hello from Image_Gen");
-  // console.log(response.data[0].url);
-});
-
 
 app.post("/api/chats/", authMiddleware, async(req, res)=>{
-  console.log("hit2");
   const {role, message, image, date} = req.body;
-  console.log(req, req.body);
   const userId = req.userId;
   const newChat = new NewChat({
     _id: new mongoose.Types.ObjectId(),
@@ -159,33 +130,26 @@ app.post("/api/chats/", authMiddleware, async(req, res)=>{
       },
     ],
   });
-  console.log({role, message, image, newChat, userId, "welcome":"welcome"});
   await newChat.save();
   res.json({status: 201, message: "New Chat created", chatId: newChat._id});
 })
 
 
 app.get("/api/chats/:id",authMiddleware, async(req, res)=>{
-  const userId = req.userId;
   const {id} = req.params;
-  console.log(id);
   const existingChat = await NewChat.findById(id);
   const messages = existingChat?.messages || "";
-  console.log(existingChat);
   return res.status(201).json({chats: messages});
 })
 
 app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
   const {id} = req.params;
   const {role, message, image, date} = req.body;
-  console.log(id, message, image);
   const userId = req.userId;
   if(!userId){
     res.json({status:500, message:"Please Login First"});
   }
-
   const existingChat = await NewChat.findById(id);
-  console.log(existingChat);
   if(existingChat && id){
     existingChat.messages.push({
       role:role,
@@ -193,7 +157,7 @@ app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
       images:image? image : "",
       date: date
     });
-    await existingChat.save(); // Save the updated chat to the database
+    await existingChat.save(); 
     res.json({status: 201, message: "Existing Chat updated"});
   } else {
     res.status(404).json({status: 404, message: "Chat not found"});
@@ -202,11 +166,9 @@ app.post("/api/chats/:id", authMiddleware, async(req, res)=>{
 
 app.post("/api/userChats", authMiddleware, async (req, res) => {
   const userId = req.userId;
-  console.log(userId);
-
+  
   try {
     const {chatId, message, date} = req.body;
-    console.log(chatId, message, date,  'chatId, message, date');
     if (!chatId || !message) {
       return res.status(400).json({ message: "chatId and message are required" });
     }
@@ -247,20 +209,17 @@ app.get('/api/userChats', authMiddleware, async(req, res)=>{
     for (let chat of userChats.chats) {
       const chatDoc = await NewChat.findById(chat.chatId);
       chat.messageCount = chatDoc ? (chatDoc.messages ? chatDoc.messages.length : 0) : 0;
-      console.log(chat.messageCount);
       messageCount=chat.messageCount+messageCount;
     }
   }
-  console.log(messageCount);
   res.status(200).json({chats:userChats.chats, messageCount:messageCount});
  } catch (error) {
   console.error(error);
-    res.status(500).json({ message: "Error updating user profile", error }); 
+  res.status(500).json({ message: "Error updating user profile", error }); 
  } 
 })
 
 app.delete("/api/chats", async (req, res) => {
-  
   try {
     const result = await NewChat.deleteMany({ });
     res.status(200).json({ message: "All chats deleted successfully", deletedCount: result.deletedCount });
@@ -272,7 +231,6 @@ app.delete("/api/chats", async (req, res) => {
 
 
 app.get("/api/userProfile",authMiddleware, async (req, res) => {
-  console.log(req.headers);
   const userId= req.userId;
   try {
     const userProfile = await UserProfile.findOne({ userId });
@@ -284,9 +242,7 @@ app.get("/api/userProfile",authMiddleware, async (req, res) => {
 });
 
 app.post("/api/userProfile",authMiddleware,  async (req, res) => {
-  
   const userId = req.userId;
-  console.log(userId, 'userId');
   try {
     const { name, email, phone, location, bio, avatar, date} = req.body;
     const userProfile = new UserProfile({ name, email, phone, location, bio, date, userId, date, avatar });
@@ -323,9 +279,7 @@ app.put("/api/userProfile", authMiddleware, async (req, res) => {
 });
 
 app.post('/api/forgot-password', async(req, res)=>{
-  console.log('clicked');
   const {email, password}=req.body;
-  console.log(email, password);
   try {
     const user = await User.findOne({email});
     if(!user){
